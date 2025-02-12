@@ -1,32 +1,63 @@
+---
+# Required: Terraform, TFENV, Trivy, TFLINT, terraform-docs, tflint, 
 repos:
-  - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.88.0
+  - repo: "https://github.com/pre-commit/pre-commit-hooks"
+    rev: v4.6.0
     hooks:
-      - id: terraform_fmt
-      - id: terraform_wrapper_module_for_each
-      - id: terraform_docs
-        args:
-          - '--args=--lockfile=false'
-      - id: terraform_tflint
-        args:
-          - '--args=--only=terraform_deprecated_interpolation'
-          - '--args=--only=terraform_deprecated_index'
-          - '--args=--only=terraform_unused_declarations'
-          - '--args=--only=terraform_comment_syntax'
-          - '--args=--only=terraform_documented_outputs'
-          - '--args=--only=terraform_documented_variables'
-          - '--args=--only=terraform_typed_variables'
-          - '--args=--only=terraform_module_pinned_source'
-          - '--args=--only=terraform_naming_convention'
-          - '--args=--only=terraform_required_version'
-          - '--args=--only=terraform_required_providers'
-          - '--args=--only=terraform_standard_module_structure'
-          - '--args=--only=terraform_workspace_remote'
-          - '--args=--only=terraform_unused_required_providers'
-      - id: terraform_validate
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
-    hooks:
+      - id: check-added-large-files
+      - id: check-byte-order-marker
+      - id: check-executables-have-shebangs
+      - id: check-json
       - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-xml
+      - id: check-yaml
+      - id: detect-aws-credentials
+      - id: detect-private-key
       - id: end-of-file-fixer
-      - id: trailing-whitespace
+      - id: fix-encoding-pragma
+      - id: mixed-line-ending
+      - id: no-commit-to-branch
+        args:
+          - -b
+          - dev
+          - -b
+          - test
+          - -b
+          - stage
+          - -b
+          - perf
+          - -b
+          - prod
+          - -b
+          - nprd
+          - -b
+          - main
+          - -b
+          - master
+      - id: pretty-format-json
+  - repo: "https://github.com/gruntwork-io/pre-commit"
+    rev: v0.1.23
+    hooks:
+      # - id: gofmt # context: https://github.com/gruntwork-io/pre-commit/issues/67
+      - id: shellcheck
+      - id: terraform-fmt
+      - id: terraform-validate
+        args:
+          - --args=-no-color
+      - id: terragrunt-hclfmt
+      - id: tflint
+      - id: yapf
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.89.1
+    hooks:
+      - id: terraform_docs
+        args: 
+        - --args=--output-file README.md
+        - --args=--output-mode inject
+      - id: terraform_trivy
+        args:
+            - --args=--severity HIGH,CRITICAL
+            - --args=--ignorefile ./.trivyignore
+            - --args=--skip-dirs="**/.terraform"
+            - --args=--skip-dirs="*/modules"
