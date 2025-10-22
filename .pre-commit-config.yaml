@@ -61,3 +61,15 @@ repos:
             - --args=--ignorefile ./.trivyignore
             - --args=--skip-dirs="**/.terraform"
             - --args=--skip-dirs="*/modules"
+  - repo: https://github.com/bridgecrewio/checkov.git
+    rev: '3.2.485'  # Use latest version
+    hooks:
+      - id: checkov
+        name: Checkov Terraform Compliance Scan
+        args:
+          - --directory=.
+          - --framework=terraform
+          - --external-checks-git=git@github.com:CiscoOpsStack/ops_stack_github_actions.git
+          - --external-checks-dir=checkov-policies
+          - --check=CKV_OPSTK_*,CKV2_OPSTK_*  # Only run custom policies
+
